@@ -381,9 +381,130 @@ WHERE c.id IS NULL;
 #this is for right exclusive join
 SELECT * 
 FROM joins AS j
-LEFT JOIN course AS c
+RIGHT JOIN course AS c
 ON j.id = c.id
 WHERE j.id IS NULL;
+#FULL EXCLUSIVE JOIN
+SELECT * 
+FROM joins AS j
+LEFT JOIN course AS c
+ON j.id = c.id
+WHERE c.id IS NULL
+UNION
+SELECT * 
+FROM joins AS j
+RIGHT JOIN course AS c
+ON j.id = c.id
+WHERE j.id IS NULL;
+SELECT * FROM joins;
+SELECT * FROM course;
+#Self Join - It is a regular join but the table is joined with itself
+CREATE TABLE employee(
+id INT PRIMARY KEY,
+name VARCHAR(50),
+manager_id INT
+);
+INSERT INTO employee(id, name, manager_id)
+VALUES
+(101,"Adam", 103),
+(102,"Bob", 104),
+(103,"Casey", NULL),
+(104,"Donald", 103);
+SELECT * FROM employee;
+SELECT * 
+FROM employee AS a
+JOIN employee AS b
+ON a.id = b.manager_id;
+SELECT a.name, b.name 
+FROM employee AS a
+JOIN employee AS b
+ON a.id = b.manager_id;
+#Now showing "a" name into manager name
+SELECT a.name AS manager_name, b.name 
+FROM employee AS a
+JOIN employee AS b
+ON a.id = b.manager_id;
+#UNION- It is used to combine the results-set of two or more SELECT statements. Gives unique records
+#to use it- 1. Every SELECT should have some no.of columns 
+#           2. Columns must have similar data types 
+#           3.Columns in every SELECT should be in same order
+#Creating another table for a better understanding
+CREATE TABLE employee2(
+id INT PRIMARY KEY,
+name VARCHAR(50),
+manager_id INT
+);
+INSERT INTO employee2(id, name, manager_id)
+VALUES
+(101,"Adam", 103),
+(102,"Bob", 104),
+(103,"Casey", NULL),
+(104,"Donald", 103),
+(105,"Doom", 103),
+(106,"Bob", 104),
+(107,"Cols", NULL),
+(108,"Donald", 103);
+#now showing the valus which are in common or unique. That means it will print from both the table with same values "UNION" or unique
+SELECT name FROM employee
+UNION 
+SELECT name FROM employee2;
+#here it will print each and every value from both the tables
+SELECT name FROM employee
+UNION ALL
+SELECT name FROM employee2;
+#sql sub queries-A sub queries or a nested query is a query within another sql query
+#it involves 2 select statements
+#SQL Sub queries:- Example:- Get names of all students who scored more than class average.
+#step1- Find the avg of class
+#step 2- Find the names of students with marks>avg
+SELECT * FROM student2;
+#step 1- taking average of the class
+SELECT AVG(marks)
+FROM student2;
+#Step 2- now taking all the students name who has scored more than average.
+SELECT full_name, marks 
+FROM student2
+WHERE marks > 89;
+# to combine these two steps we will use sub-queries
+SELECT full_name, marks 
+FROM student2
+WHERE marks > (SELECT AVG(marks) FROM student2);
+#2nd example- Find the names of all students with even roll numbers
+#step 1: Find the even roll numbers
+SELECT rollno
+FROM student2
+WHERE rollno % 2=0;
+#step 2 - Finding the names of students with even roll no. 
+# after the 1st step the even roll no are-[102, 104, 106]
+SELECT full_name
+FROM student2
+WHERE rollno IN (102, 104, 106);
+# now combining two steps by using sub-queries 
+SELECT full_name
+FROM student2
+WHERE rollno IN (SELECT rollno FROM student2 WHERE rollno % 2=0);
+#Example 3:- Find the marks from the students of delhi
+SELECT MAX(marks)
+FROM(SELECT * FROM student2 WHERE city = "Delhi") AS temp; #whenever we write anthing in "FROM" we need to use alias(AS)
+
+#Mysql Views- A view is a virtual table based on the result-set of an SQL statement.
+CREATE VIEW view1 AS
+SELECT rollno, full_name, marks FROM student2;
+SELECT * FROM view1;
+SELECT * FROM student;
+USE college;
+#-------Now this is the end of Sql ------#
+
+
+
+
+
+
+
+
+
+
+
 
 
 
